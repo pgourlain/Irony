@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 using Irony.Parsing;
 using System.Diagnostics;
 using FastColoredTextBoxNS;
+using FastColoredTextBoxNS.Types;
 
 namespace Irony.WinForms.Highlighter {
 

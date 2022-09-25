@@ -8,9 +8,9 @@ using Irony.Parsing;
 namespace Irony.WinForms {
   using FastColoredTextBox = FastColoredTextBoxNS.FastColoredTextBox;
   using FctbConsoleTextBox = FastColoredTextBoxNS.ConsoleTextBox;
-  using Style = FastColoredTextBoxNS.Style;
+  using Style = FastColoredTextBoxNS.Types.Style;
   using TextChangedEventArgs = FastColoredTextBoxNS.TextChangedEventArgs;
-  using TextStyle = FastColoredTextBoxNS.TextStyle;
+  using TextStyle = FastColoredTextBoxNS.Types.TextStyle;
   using WordWrapMode = FastColoredTextBoxNS.WordWrapMode;
 
   /// <summary>

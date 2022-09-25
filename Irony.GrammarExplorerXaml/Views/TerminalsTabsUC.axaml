@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:uc="using:Irony.GrammarExplorerXaml.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Irony.GrammarExplorerXaml.Views.TerminalsTabsUC"
+             Padding="0,0,0,2">
+  <TabControl>
+    <TabItem Header="Terminals">
+      <TextBox IsReadOnly="True" Text="{Binding TerminalsText}" FontFamily="Consolas" FontSize="10">
+        
+      </TextBox>
+    </TabItem>
+    <TabItem Header="Non-Terminals">
+      <TextBox IsReadOnly="True" Text="{Binding NonTerminalsText}" FontFamily="Consolas" FontSize="10">
+
+      </TextBox>
+    </TabItem>
+    <TabItem Header="Parser States">
+      <TextBox IsReadOnly="True" Text="{Binding ParserStateText}" FontFamily="Consolas" FontSize="10">
+
+      </TextBox>
+    </TabItem>
+    <TabItem Header="Parser Test">
+      <uc:GrammarTestUC></uc:GrammarTestUC>
+    </TabItem>
+  </TabControl>
+</UserControl>

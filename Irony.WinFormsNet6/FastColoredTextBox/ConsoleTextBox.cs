@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FastColoredTextBoxNS.Types;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -83,7 +84,7 @@ namespace FastColoredTextBoxNS
                 ClearUndo();
             }
 
-            return new Range(this, StartReadPlace, Range.End).Text.TrimEnd('\r', '\n');
+            return new TextSelectionRange(this, StartReadPlace, Range.End).Text.TrimEnd('\r', '\n');
         }
 
         public override void OnTextChanging(ref string text)

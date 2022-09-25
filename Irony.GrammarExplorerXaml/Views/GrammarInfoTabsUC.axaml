@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="250"
+             x:Class="Irony.GrammarExplorerXaml.Views.GrammarInfoTabsUC" 
+             >
+  <TabControl>
+    <TabItem Header="Grammar Info" >
+      <StackPanel >
+        <StackPanel Orientation="Horizontal" Spacing="5">
+          <TextBlock Text="Language:"/>
+          <TextBlock Text="{Binding LangInfo.LanguageName}"/>
+          <TextBlock Text=", Version :"/>
+          <TextBlock Text="{Binding LangInfo.Version}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="5">
+          <TextBlock Text="Grammar Comment:"/>
+          <TextBlock Text="{Binding LangInfo.Description}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="5">
+          <TextBlock Text="Parser state count:"/>
+          <TextBlock Text="{Binding CountStates}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="5">
+          <TextBlock Text="Parser construction time, ms:"/>
+          <TextBlock Text="{Binding ConstructionTime}"/>
+        </StackPanel>
+      </StackPanel>
+    </TabItem>
+    <TabItem Header="Grammar Errors">
+
+    </TabItem>
+    <TabItem Header="Parser Output">
+
+    </TabItem>
+    <TabItem Header="Parser Trace">
+
+    </TabItem>
+    <TabItem Header="Runtime Output">
+
+    </TabItem>
+  </TabControl>
+</UserControl>

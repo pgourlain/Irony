@@ -58,7 +58,7 @@ namespace Irony.WinForms {
           FastColoredTextBox.Text = value;
           FastColoredTextBox.SelectionStart = 0;
           FastColoredTextBox.SelectionLength = 0;
-          FastColoredTextBox.SetVisibleState(0, FastColoredTextBoxNS.VisibleState.Visible);
+          FastColoredTextBox.SetVisibleState(0, FastColoredTextBoxNS.Types.VisibleState.Visible);
         }
       }
     }

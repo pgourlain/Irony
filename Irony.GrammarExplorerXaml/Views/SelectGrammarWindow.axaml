@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="350"
+        x:Class="Irony.GrammarExplorerXaml.Views.SelectGrammarWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Select Grammar"
+        ShowInTaskbar="False"
+        CanResize="False"
+        Width="400"
+        Height="350"
+        WindowStartupLocation="CenterOwner"
+        >
+  <DockPanel>
+    <ListBox Name="lbGrammars" DockPanel.Dock="Top" VerticalAlignment="Stretch"
+             Items="{Binding .}">
+      <!--<ListBox.ItemTemplate>
+        <DataTemplate>
+          <Label Content="{Binding Caption}"></Label>
+        </DataTemplate>
+      </ListBox.ItemTemplate>-->
+    </ListBox>
+    <StackPanel Margin="5" DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Orientation="Horizontal"
+                HorizontalAlignment="Right">
+      <Button Click="OkButton_Click" Width="100" HorizontalContentAlignment="Center">Ok</Button>
+      <Button Click="OkButton_Click" Width="100" HorizontalContentAlignment="Center">Cancel</Button>
+    </StackPanel>
+  </DockPanel>
+</Window>

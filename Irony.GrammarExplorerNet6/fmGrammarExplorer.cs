@@ -18,10 +18,10 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Irony.Ast;
-using Irony.GrammarExplorer.Properties;
 using Irony.Parsing;
 using Irony.WinForms;
 using Irony.WinForms.Exceptions;
+using Irony.GrammarExplorer.Properties;
 
 namespace Irony.GrammarExplorer {
   using ScriptException = Irony.Interpreter.ScriptException; //that's the only place we use stuff from Irony.Interpreter
