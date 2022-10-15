@@ -61,5 +61,34 @@ namespace Irony.Parsing {
       return xElem;
     }//method
 
-  }//class
+    public static JsonParseTree ToJson(this ParseTree parseTree)
+    {
+      var result = new JsonParseTree();
+      if (parseTree == null || parseTree.Root == null) return result;
+      result.Root = parseTree.Root.ToJson();
+      return result;
+    }
+
+    public static JsonParseTreeNode ToJson(this ParseTreeNode node)
+    {
+      var result = new JsonParseTreeNode();
+      result.Term = node.Term.Name;
+      var term = node.Term;
+      if (term.HasAstConfig() && term.AstConfig.NodeType != null)
+        result.AstNodeType = term.AstConfig.NodeType.Name;
+      if (node.Token != null)
+      {
+        result.Terminal = node.Term.GetType().Name;
+        //xElem.SetAttribute("Text", node.Token.Text);
+        if (node.Token.Value != null)
+          result.Value = node.Token.Value.ToString();
+      }
+      else
+      {
+        result.ChildNodes = node.ChildNodes.Select(x => x.ToJson()).ToArray();
+      }
+      return result;
+    }
+
+    }//class
 }//namespace
