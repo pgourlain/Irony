@@ -3,11 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="250"
-             x:Class="Irony.GrammarExplorerXaml.Views.GrammarInfoTabsUC" 
+             x:Class="Irony.GrammarExplorerXaml.Views.GrammarInfoTabsUC"
              >
-  <TabControl>
+  <TabControl SelectedIndex="{Binding BottomSelectedIndex}">
     <TabItem Header="Grammar Info" >
-      <StackPanel >
+      <StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="5">
           <TextBlock Text="Language:"/>
           <TextBlock Text="{Binding LangInfo.LanguageName}"/>
@@ -29,7 +29,15 @@
       </StackPanel>
     </TabItem>
     <TabItem Header="Grammar Errors">
-
+		<DockPanel LastChildFill="True">
+			<DataGrid Items="{Binding LangInfo.Errors}" AutoGenerateColumns="False" SelectionMode="Single">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="Level" Binding="{Binding Level}" IsReadOnly="True"/>
+					<DataGridTextColumn Header="Message" Binding="{Binding Message}" IsReadOnly="True"/>
+					<DataGridTextColumn Header="ParserState" Binding="{Binding ParserState}" IsReadOnly="True"/>
+				</DataGrid.Columns>
+			</DataGrid>
+		</DockPanel>
     </TabItem>
     <TabItem Header="Parser Output">
 

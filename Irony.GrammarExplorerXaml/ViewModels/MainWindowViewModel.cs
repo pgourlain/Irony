@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using HarfBuzzSharp;
+using Irony.GrammarExplorerExecutor;
 using Irony.GrammarExplorerXaml.Models;
 using Irony.GrammarExplorerXaml.Views;
 using Irony.Parsing;
@@ -17,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Irony.GrammarExplorerXaml.ViewModels
 {
-  public class MainWindowViewModel : ViewModelBase
+  public class MainWindowViewModel : ViewModelBase, IDisposable
   {
     public MainWindowViewModel()
     {
@@ -25,28 +26,27 @@ namespace Irony.GrammarExplorerXaml.ViewModels
     }
     public string Greeting => LangInfo != null ? LangInfo.Description : "No Grammar loaded";
 
-    public string TerminalsText { get; private set; }
-    public string NonTerminalsText {get; private set; }
+    public string TerminalsText => LangInfo?.TerminalsText ?? string.Empty;
+    public string NonTerminalsText => LangInfo?.NonTerminalsText ?? string.Empty;
 
-    public string ParserStateText {get; private set; }
+    public string ParserStateText => LangInfo?.ParserStateText ?? string.Empty;
 
-    public string CountStates { get; private set; }
-    public string ConstructionTime { get; private set; }
+    public string CountStates => LangInfo?.CountStates ?? string.Empty;
+    public string ConstructionTime => LangInfo?.ConstructionTime ?? string.Empty;
+
+    public int BottomSelectedIndex { get; set; }
 
     public ReactiveCommand<Unit, Unit> OpenCommand { get; }
+    public LanguageInformation? LangInfo { get; private set; }
 
-    public Grammar? CurrentGrammar { get; private set; }
-    public LanguageAttribute? LangInfo { get; private set; }
-    LanguageData _language;
-    Parser _parser;
-    ParseTree _parseTree;
+    private GrammarLoader? _grammarLoader;
 
     public async Task OnOpenCommand()
     {
-      if (Avalonia.Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+      if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
       {
         var dlg = new OpenFileDialog();
-        dlg.Filters.Add(new FileDialogFilter() { Name = "Assembly file", Extensions = { "dll", "exe" } });
+        dlg.Filters?.Add(new FileDialogFilter() { Name = "Assembly file", Extensions = { "dll", "exe" } });
         dlg.AllowMultiple = false;
         var result = await dlg.ShowAsync(desktop.MainWindow);
         if (result != null && result.Any())
@@ -59,70 +59,69 @@ namespace Irony.GrammarExplorerXaml.ViewModels
           var selectedItems = await window.ShowDialog<IEnumerable<GrammarItem>>(desktop.MainWindow);
           if (selectedItems != null && selectedItems.Any())
           {
-            LoadGrammar(selectedItems.First());
+            await LoadGrammar(selectedItems.First());
           }
         }
       }
     }
 
-    private void LoadGrammar(GrammarItem item)
+    private void UnloadGrammar()
     {
+      _grammarLoader?.Dispose();
+    }
+
+    private async Task LoadGrammar(GrammarItem item)
+    {
+      UnloadGrammar();
       var grammarItemToLoad = item;
-      var selectedGrammarAssembly = GrammarLoader.LoadAssembly(grammarItemToLoad.Location);
-      var type = selectedGrammarAssembly.GetType(grammarItemToLoad.TypeName, true, true);
-      CurrentGrammar = Activator.CreateInstance(type) as Grammar;
-      CreateParser();
-      ShowLanguageInfo();
+      _grammarLoader = new GrammarLoader(grammarItemToLoad.Location);
+      //var grammar = gl.LoadGrammar(grammarItemToLoad.TypeName);
+      //CreateParser(grammar);
+      //ShowLanguageInfo(grammar);
       //refresh all
+      //grammar = null;
+
+      LangInfo = await _grammarLoader.GetLanguageInformation(grammarItemToLoad.TypeName);
+      BottomSelectedIndex = (LangInfo.Errors != null && LangInfo.Errors.Length > 0) ? 1 : 0;
+      //CountStates = info.CountStates;
+      //ConstructionTime = info.ConstructionTime;
+      //TerminalsText = info.TerminalsText;
+      //NonTerminalsText = info.NonTerminalsText;
+      //ParserStateText = info.ParserStateText;
+
+
       this.RaisePropertyChanged(string.Empty);
     }
 
-    private void CreateParser()
+    //private void CreateParser(Grammar grammar)
+    //{
+    //  var language = new LanguageData(grammar);
+    //  var parser = new Parser(language);
+
+    //  CountStates = language.ParserData.States.Count.ToString();
+    //  ConstructionTime = language.ConstructionTime.ToString();
+
+    //  TerminalsText = ParserDataPrinter.PrintTerminals(language);
+    //  NonTerminalsText = ParserDataPrinter.PrintNonTerminals(language);
+    //  ParserStateText = ParserDataPrinter.PrintStateList(language);
+    //}
+
+    //private void ShowLanguageInfo(Grammar grammar)
+    //{
+    //  if (grammar == null) return;
+    //  var langAttr = LanguageAttribute.GetValue(grammar.GetType());
+    //  LangInfo = new LanguageAttribute(langAttr.LanguageName, langAttr.Version, langAttr.Description);
+    //}
+
+    private GrammarItemList LoadGrammars(string assemblyPath)
     {
-      _language = new LanguageData(CurrentGrammar);
-      _parser = new Parser(_language);
-
-      CountStates= _language.ParserData.States.Count.ToString();
-      ConstructionTime = _language.ConstructionTime.ToString();
-
-      TerminalsText = ParserDataPrinter.PrintTerminals(_language);
-      NonTerminalsText = ParserDataPrinter.PrintNonTerminals(_language);
-      ParserStateText = ParserDataPrinter.PrintStateList(_language);
+      using var gLoader = new GrammarLoader(assemblyPath);
+      return gLoader.Grammars;
     }
 
-    private void ShowLanguageInfo()
+    public void Dispose()
     {
-      if (CurrentGrammar == null) return;
-      var langAttr = LanguageAttribute.GetValue(CurrentGrammar.GetType());
-      LangInfo = langAttr;
-    }
-
-    private static GrammarItemList LoadGrammars(string assemblyPath)
-    {
-      Assembly asm = null;
-      try
-      {
-        asm = GrammarLoader.LoadAssembly(assemblyPath);
-      }
-      catch (Exception ex)
-      {
-        //MessageBox.Show("Failed to load assembly: " + ex.Message);
-        return null;
-      }
-      var types = asm.GetTypes();
-      var grammars = new GrammarItemList();
-      foreach (Type t in types)
-      {
-        if (t.IsAbstract) continue;
-        if (!t.IsSubclassOf(typeof(Grammar))) continue;
-        grammars.Add(new GrammarItem(t, assemblyPath));
-      }
-      if (grammars.Count == 0)
-      {
-        //MessageBox.Show("No classes derived from Irony.Grammar were found in the assembly.");
-        //return null;
-      }
-      return grammars;
+      _grammarLoader?.Dispose();
     }
   }
 }

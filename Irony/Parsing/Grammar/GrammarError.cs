@@ -58,6 +58,17 @@ namespace Irony.Parsing {
           max = err.Level;
       return max; 
     }
+
+    public JsonGrammarError[] ToJson()
+    {
+      return this.Select(x => new JsonGrammarError
+      {
+        Level = x.Level,
+        Message = x.Message,
+        ParserState = x.State?.ToString(),
+
+      }).ToArray();
+    }
   }
 
   //Used to cancel parser construction when fatal error is found
