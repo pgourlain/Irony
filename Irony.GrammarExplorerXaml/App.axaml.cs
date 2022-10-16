@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -24,6 +25,11 @@ namespace Irony.GrammarExplorerXaml
       }
 
       base.OnFrameworkInitializationCompleted();
+    }
+
+    private void OnAbout_Click(object sender, EventArgs args)
+    {
+
     }
   }
 }
