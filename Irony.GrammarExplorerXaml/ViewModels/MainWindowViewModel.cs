@@ -23,6 +23,8 @@ namespace Irony.GrammarExplorerXaml.ViewModels
     public MainWindowViewModel()
     {
       OpenCommand = ReactiveCommand.CreateFromTask(OnOpenCommand);
+      ParseCommand = ReactiveCommand.CreateFromTask(OnParseCommand);
+      LoadParseCommand = ReactiveCommand.CreateFromTask(OnLoadParseCommand);
     }
     public string Greeting => LangInfo != null ? LangInfo.Description : "No Grammar loaded";
 
@@ -37,6 +39,8 @@ namespace Irony.GrammarExplorerXaml.ViewModels
     public int BottomSelectedIndex { get; set; }
 
     public ReactiveCommand<Unit, Unit> OpenCommand { get; }
+    public ReactiveCommand<Unit, Unit> ParseCommand { get; }
+    public ReactiveCommand<Unit, Unit> LoadParseCommand { get; }
     public LanguageInformation? LangInfo { get; private set; }
 
     private GrammarLoader? _grammarLoader;
@@ -63,6 +67,16 @@ namespace Irony.GrammarExplorerXaml.ViewModels
           }
         }
       }
+    }
+
+    public async Task OnParseCommand()
+    {
+      //
+    }
+
+    public async Task OnLoadParseCommand()
+    {
+
     }
 
     private void UnloadGrammar()

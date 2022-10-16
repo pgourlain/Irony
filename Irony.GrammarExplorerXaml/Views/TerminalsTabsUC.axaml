@@ -8,17 +8,17 @@
              Padding="0,0,0,2">
   <TabControl>
     <TabItem Header="Terminals">
-      <TextBox IsReadOnly="True" Text="{Binding TerminalsText}" FontFamily="monospace" FontSize="12">
+      <TextBox IsReadOnly="True" Text="{Binding TerminalsText}" FontFamily="Monospace" FontSize="14">
         
       </TextBox>
     </TabItem>
     <TabItem Header="Non-Terminals">
-      <TextBox IsReadOnly="True" Text="{Binding NonTerminalsText}" FontFamily="monospace" FontSize="12">
+      <TextBox IsReadOnly="True" Text="{Binding NonTerminalsText}" FontFamily="Monospace" FontSize="14">
 
       </TextBox>
     </TabItem>
     <TabItem Header="Parser States">
-      <TextBox IsReadOnly="True" Text="{Binding ParserStateText}" FontFamily="monospace" FontSize="12">
+      <TextBox IsReadOnly="True" Text="{Binding ParserStateText}" FontFamily="Monospace" FontSize="14">
 
       </TextBox>
     </TabItem>
