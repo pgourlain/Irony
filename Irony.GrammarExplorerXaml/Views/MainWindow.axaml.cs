@@ -17,7 +17,7 @@ namespace Irony.GrammarExplorerXaml.Views
     {
       if (this.DataContext is IDisposable toDispose)
       {
-        //cloe the web server if it's running.
+        //close the web server if it's running.
         toDispose.Dispose();
       }
     }

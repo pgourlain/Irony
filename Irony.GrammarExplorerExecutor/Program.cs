@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text.Json;
 
 var assemblyToLoad = string.Empty;
 var grammarTypeName = string.Empty;
@@ -40,8 +41,12 @@ async Task ParseText(HttpContext context)
     var language = new LanguageData(grammar);
     var parser = new Parser(language);
     var result = parser.Parse(rawRequestBody);
-    var json = result.ToJson();
-    await context.Response.WriteAsJsonAsync(json);
+    var options = new JsonSerializerOptions
+    {
+      PropertyNameCaseInsensitive = true,
+    };
+    var json = System.Text.Json.JsonSerializer.Serialize(result.ToJson(), options);
+    await context.Response.WriteAsync(json);
   }
   else
   {

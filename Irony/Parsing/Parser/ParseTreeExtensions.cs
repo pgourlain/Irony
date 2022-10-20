@@ -14,49 +14,59 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO; 
+using System.IO;
 using System.Xml;
 
-namespace Irony.Parsing {
+namespace Irony.Parsing
+{
 
-  public static class ParseTreeExtensions {
+  public static class ParseTreeExtensions
+  {
 
-    public static string ToXml(this ParseTree parseTree) {
+    public static string ToXml(this ParseTree parseTree)
+    {
       if (parseTree == null || parseTree.Root == null) return string.Empty;
-      var xdoc = ToXmlDocument(parseTree); 
+      var xdoc = ToXmlDocument(parseTree);
       StringWriter sw = new StringWriter();
-      XmlTextWriter xw = new XmlTextWriter(sw);
-      xw.Formatting = Formatting.Indented;
+      XmlTextWriter xw = new XmlTextWriter(sw)
+      {
+        Formatting = Formatting.Indented
+      };
       xdoc.WriteTo(xw);
       xw.Flush();
       return sw.ToString();
     }
-    
-    public static XmlDocument ToXmlDocument(this ParseTree parseTree) {
+
+    public static XmlDocument ToXmlDocument(this ParseTree parseTree)
+    {
       var xdoc = new XmlDocument();
       if (parseTree == null || parseTree.Root == null) return xdoc;
       var xTree = xdoc.CreateElement("ParseTree");
-      xdoc.AppendChild(xTree); 
+      xdoc.AppendChild(xTree);
       var xRoot = parseTree.Root.ToXmlElement(xdoc);
       xTree.AppendChild(xRoot);
-      return xdoc; 
+      return xdoc;
     }
 
-    public static XmlElement ToXmlElement(this ParseTreeNode node, XmlDocument ownerDocument) {
+    public static XmlElement ToXmlElement(this ParseTreeNode node, XmlDocument ownerDocument)
+    {
       var xElem = ownerDocument.CreateElement("Node");
       xElem.SetAttribute("Term", node.Term.Name);
-      var term = node.Term; 
-      if (term.HasAstConfig() && term.AstConfig.NodeType != null) 
+      var term = node.Term;
+      if (term.HasAstConfig() && term.AstConfig.NodeType != null)
         xElem.SetAttribute("AstNodeType", term.AstConfig.NodeType.Name);
-      if (node.Token != null) {
+      if (node.Token != null)
+      {
         xElem.SetAttribute("Terminal", node.Term.GetType().Name);
         //xElem.SetAttribute("Text", node.Token.Text);
         if (node.Token.Value != null)
-          xElem.SetAttribute("Value", node.Token.Value.ToString()); 
-      } else 
-        foreach (var child in node.ChildNodes) {
+          xElem.SetAttribute("Value", node.Token.Value.ToString());
+      }
+      else
+        foreach (var child in node.ChildNodes)
+        {
           var xChild = child.ToXmlElement(ownerDocument);
-          xElem.AppendChild(xChild); 
+          xElem.AppendChild(xChild);
         }
       return xElem;
     }//method
@@ -64,6 +74,12 @@ namespace Irony.Parsing {
     public static JsonParseTree ToJson(this ParseTree parseTree)
     {
       var result = new JsonParseTree();
+      if (parseTree != null)
+      {
+        result.LogMessages = parseTree.ParserMessages.ToJson();
+        result.ParseTimeMilliseconds = parseTree.ParseTimeMilliseconds;
+        result.Tokens = parseTree.Tokens.ToJson();
+      }
       if (parseTree == null || parseTree.Root == null) return result;
       result.Root = parseTree.Root.ToJson();
       return result;
@@ -71,8 +87,10 @@ namespace Irony.Parsing {
 
     public static JsonParseTreeNode ToJson(this ParseTreeNode node)
     {
-      var result = new JsonParseTreeNode();
-      result.Term = node.Term.Name;
+      var result = new JsonParseTreeNode
+      {
+        Term = node.Term.Name
+      };
       var term = node.Term;
       if (term.HasAstConfig() && term.AstConfig.NodeType != null)
         result.AstNodeType = term.AstConfig.NodeType.Name;
@@ -90,5 +108,44 @@ namespace Irony.Parsing {
       return result;
     }
 
-    }//class
+    public static JsonLogMessage[] ToJson(this LogMessageList logMessages)
+    {
+      if (logMessages != null)
+      {
+        return logMessages.Select(x => x.ToJson()).ToArray();
+      }
+      return Array.Empty<JsonLogMessage>();
+    }
+
+    public static JsonLogMessage ToJson(this LogMessage logMessage)
+    {
+      return new JsonLogMessage()
+      {
+        Level= logMessage.Level,
+        Location= new JsonSourceLocation(logMessage.Location),  
+        Message= logMessage.Message,
+        ParserState = logMessage.ParserState.ToString(),
+      };
+    }
+
+    public static JsonToken[] ToJson(this TokenList tokens)
+    {
+      if (tokens != null)
+      {
+        return tokens.Select(x => x.ToJson()).ToArray();
+      }
+      return Array.Empty<JsonToken>();
+    }
+
+    public static JsonToken ToJson(this Token token)
+    {
+      return new JsonToken()
+      {
+        Terminal= token.Terminal?.ToString(),
+        KeyTerm = token.KeyTerm?.ToString(),
+        Value = token.Value?.ToString(),
+      };
+    }
+
+  }//class
 }//namespace

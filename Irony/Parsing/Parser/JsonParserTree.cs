@@ -6,9 +6,12 @@ namespace Irony.Parsing
 {
   public class JsonParseTree
   {
+    public long ParseTimeMilliseconds { get; set; }
     public ParseTreeStatus Status { get; set; }
+    public string ErrorMessage { get; set; }
     public JsonParseTreeNode Root { get; set; }
-
+    public JsonLogMessage[] LogMessages { get; internal set; }
+    public JsonToken[] Tokens { get; set; }
   }
   public class JsonParseTreeNode
   {
@@ -17,5 +20,12 @@ namespace Irony.Parsing
     public string AstNodeType { get; set; }
     public string Value { get; set; }
     public JsonParseTreeNode[] ChildNodes { get; set; }
+  }
+
+  public class JsonToken
+  {
+    public string Terminal { get; set; }
+    public string KeyTerm { get; set; }
+    public string Value { get; set; }
   }
 }

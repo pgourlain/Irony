@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Irony.GrammarExplorerExecutor": {
+      "commandName": "Project",
+      "commandLineArgs": "1234 K:\\github\\bnf_and_pdf\\pdfsharpdsl\\bin\\Debug\\net6.0\\pdfsharpdsl.dll Pdf.Parser.PdfGrammar",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50962;http://localhost:50963"
+    }
+  }
+}

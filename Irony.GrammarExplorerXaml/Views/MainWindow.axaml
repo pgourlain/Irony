@@ -21,8 +21,8 @@
 
   <DockPanel>
 	  <DockPanel LastChildFill="True" DockPanel.Dock="Top">
-		  <Button Command="{Binding OpenCommand}" Content="Select assembly..." DockPanel.Dock="Left"/>
-		  <Button Content="Release Grammar dll" DockPanel.Dock="Right" IsEnabled="False"/>
+		  <Button Command="{Binding OpenGrammarCommand}" Content="Select assembly..." DockPanel.Dock="Left"/>
+		  <Button Command="{Binding ReleaseGrammarCommand}" Content="Release Grammar dll" DockPanel.Dock="Right"/>
 		  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 	  </DockPanel>
     <Grid RowDefinitions="*, 4, 200" DockPanel.Dock="Top">

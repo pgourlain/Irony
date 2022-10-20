@@ -11,12 +11,12 @@ namespace Irony.GrammarExplorerXaml.Views
 {
   public partial class GrammarTestUC : UserControl
   {
-    //private readonly TextEditor _textEditor;
+    private readonly TextEditor _textEditor;
     public GrammarTestUC()
     {
       InitializeComponent();
-      //_textEditor = this.FindControl<TextEditor>("Editor");
-      //_textEditor.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible;
+      _textEditor = this.FindControl<TextEditor>("Editor");
+      _textEditor.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible;
       //_textEditor.Background = Brushes.Transparent;
       //_textEditor.ShowLineNumbers = true;
       //_textEditor.ContextMenu = new ContextMenu
@@ -29,7 +29,7 @@ namespace Irony.GrammarExplorerXaml.Views
       //          }
       //};
       //_textEditor.TextArea.Background = this.Background;
-      //_textEditor.Document = new TextDocument("coucou");
+      _textEditor.Document = new TextDocument("coucou");
     }
   }
 }

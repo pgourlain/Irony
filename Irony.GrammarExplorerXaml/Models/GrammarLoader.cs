@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Irony.GrammarExplorerXaml.Models
@@ -24,6 +25,20 @@ namespace Irony.GrammarExplorerXaml.Models
     private bool disposedValue;
     GrammarLoaderContext? _context;
     Process? _process;
+    readonly string _grammarTypeName;
+    //readonly IHttpClientFactory _httpClientFactory;
+
+    private static readonly HttpClient _httpClient;
+
+    static GrammarLoader()
+    {
+      var socketsHandler = new SocketsHttpHandler
+      {
+        PooledConnectionLifetime = TimeSpan.FromMinutes(2)
+      };
+
+      _httpClient = new HttpClient(socketsHandler);
+    }
 
     GrammarItemList? _Grammars = null;
     public GrammarItemList Grammars
@@ -38,9 +53,10 @@ namespace Irony.GrammarExplorerXaml.Models
       }
     }
 
-    public GrammarLoader(string assemblyPath)
+    public GrammarLoader(string assemblyPath, string typeName)
     {
       _context = new GrammarLoaderContext(assemblyPath, true);
+      _grammarTypeName = typeName;
     }
 
     protected virtual void Dispose(bool disposing)
@@ -57,7 +73,7 @@ namespace Irony.GrammarExplorerXaml.Models
         {
           if (_context != null)
           {
-            WeakReference testAlcWeakRef = new WeakReference(_context);
+            WeakReference testAlcWeakRef = new(_context);
             _context.Unload();
             _context = null;
             for (int i = 0; testAlcWeakRef.IsAlive && (i < 10); i++)
@@ -125,15 +141,17 @@ namespace Irony.GrammarExplorerXaml.Models
     {
       if (_process is null || _process.HasExited)
       {
-        if (_process is not null) _process.Dispose();
+        _process?.Dispose();
         var path = typeof(LanguageInformation).Assembly.Location;
 
         if (File.Exists(path))
         {
-          var psi = new ProcessStartInfo();
-          psi.WorkingDirectory = Path.GetDirectoryName(path);
-          psi.FileName = "dotnet";
-          psi.UseShellExecute = false;
+          var psi = new ProcessStartInfo
+          {
+            WorkingDirectory = Path.GetDirectoryName(path),
+            FileName = "dotnet",
+            UseShellExecute = false
+          };
           psi.ArgumentList.Add(path);
           psi.WindowStyle = ProcessWindowStyle.Minimized;
           //TODO: find a port that is not used
@@ -146,7 +164,7 @@ namespace Irony.GrammarExplorerXaml.Models
       }
     }
 
-    internal async Task<LanguageInformation> GetLanguageInformation(string typeName)
+    internal async Task<LanguageInformation> GetLanguageInformation()
     {
       //because create instane of grammar lock dll inside this executable
       //webserver should be start on each need
@@ -158,17 +176,43 @@ namespace Irony.GrammarExplorerXaml.Models
       //return Activator.CreateInstance(type) as Grammar;
       
       if (_context is null) return new LanguageInformation { TerminalsText = "GrammarLoaderContext is null" };
-      await CheckWebServerIsStarted(_context.AssemblyPath, typeName);
+      await CheckWebServerIsStarted(_context.AssemblyPath, _grammarTypeName);
 
       try
       {
-        using HttpClient client = new HttpClient();
-        var result = await client.GetFromJsonAsync<LanguageInformation>("http://localhost:1234/langinfo") ?? new LanguageInformation { TerminalsText = "unable to get language information" };
+        var result = await _httpClient.GetFromJsonAsync<LanguageInformation>("http://localhost:1234/langinfo") ?? new LanguageInformation { TerminalsText = "unable to get language information" };
         return result;
       }
       catch (Exception ex)
       {
         return new LanguageInformation { TerminalsText = ex.ToString() };
+      }
+    }
+
+    internal async Task<JsonParseTree> ParseText(string text)
+    {
+      if (_context is null) return new JsonParseTree { Status = ParseTreeStatus.Error, ErrorMessage = "GrammarLoaderContext is not set to an instance" } ;
+      await CheckWebServerIsStarted(_context.AssemblyPath, _grammarTypeName);
+      try
+      {
+        using var responseMessage = await _httpClient.PostAsync("http://localhost:1234/parse", new StringContent(text, Encoding.UTF8));
+        if (responseMessage.IsSuccessStatusCode)
+        {
+          var parsedJson = await responseMessage.Content.ReadAsStringAsync();
+          //var result = await responseMessage.Content.ReadFromJsonAsync<JsonParseTree>();
+          var options = new JsonSerializerOptions
+          {
+            PropertyNameCaseInsensitive= true,
+          };
+          var result = System.Text.Json.JsonSerializer.Deserialize<JsonParseTree>(parsedJson, options);
+          return result;
+        }
+
+        return new JsonParseTree { Status = ParseTreeStatus.Error, ErrorMessage ="unable to parse from webserver" };        
+      }
+      catch (Exception ex)
+      {
+        return new JsonParseTree { Status = ParseTreeStatus.Error, ErrorMessage = ex.ToString() };
       }
     }
   }
