@@ -89,7 +89,8 @@ namespace Irony.Parsing
     {
       var result = new JsonParseTreeNode
       {
-        Term = node.Term.Name
+        Term = node.Term.Name,
+        DisplayValue = node.ToString()
       };
       var term = node.Term;
       if (term.HasAstConfig() && term.AstConfig.NodeType != null)
@@ -144,6 +145,7 @@ namespace Irony.Parsing
         Terminal= token.Terminal?.ToString(),
         KeyTerm = token.KeyTerm?.ToString(),
         Value = token.Value?.ToString(),
+        DisplayValue = token.ToString(),
       };
     }
 

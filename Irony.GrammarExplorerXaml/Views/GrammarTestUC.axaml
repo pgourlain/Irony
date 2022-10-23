@@ -16,18 +16,22 @@
                               ShowLineNumbers="True"
                                  FontFamily="Monospace"                                 
                                  FontWeight="Light"
-                                 FontSize="14" BorderThickness="1"                                  
+                                 FontSize="12" BorderThickness="1"                                  
 								 BorderBrush="Gray"
                              Document="{Binding TextToParse}"
+								 
+								 
 								 />
 	  </DockPanel>
     <GridSplitter Grid.Column="1" Background="LightGray" ResizeDirection="Columns"/>
     <DockPanel Grid.Column="2" VerticalAlignment="Stretch">      
       <Label DockPanel.Dock="Top">Parse Tree</Label>      
-      <TreeView Background="AliceBlue" VerticalAlignment="Stretch" Items="{Binding ParsingTreeResult}">
+      <TreeView VerticalAlignment="Stretch" 
+				FontFamily="Monospace" FontSize="10"
+				Items="{Binding ParsingTreeResult}">
         <TreeView.ItemTemplate>
           <TreeDataTemplate ItemsSource="{Binding ChildNodes}">
-            <TextBlock Text="{Binding Term}"/>
+            <TextBlock Text="{Binding DisplayValue}"/>
           </TreeDataTemplate>
         </TreeView.ItemTemplate>
       </TreeView>

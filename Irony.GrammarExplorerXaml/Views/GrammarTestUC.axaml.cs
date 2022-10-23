@@ -17,6 +17,7 @@ namespace Irony.GrammarExplorerXaml.Views
       InitializeComponent();
       _textEditor = this.FindControl<TextEditor>("Editor");
       _textEditor.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible;
+      _textEditor.LineNumbersForeground = new SolidColorBrush(new Color(0xFF, 0, 0x80, 0x80));
       //_textEditor.Background = Brushes.Transparent;
       //_textEditor.ShowLineNumbers = true;
       //_textEditor.ContextMenu = new ContextMenu

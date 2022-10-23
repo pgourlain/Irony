@@ -20,6 +20,10 @@ namespace Irony.Parsing
     public string AstNodeType { get; set; }
     public string Value { get; set; }
     public JsonParseTreeNode[] ChildNodes { get; set; }
+    /// <summary>
+    /// contains value to display in IHM
+    /// </summary>
+    public string DisplayValue { get; set; }
   }
 
   public class JsonToken
@@ -27,5 +31,9 @@ namespace Irony.Parsing
     public string Terminal { get; set; }
     public string KeyTerm { get; set; }
     public string Value { get; set; }
+    /// <summary>
+    /// contains value to display in IHM
+    /// </summary>
+    public string DisplayValue { get; set; }
   }
 }
