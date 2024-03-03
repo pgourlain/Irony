@@ -79,7 +79,7 @@ namespace Irony.Parsing {
       if (node.Token != null)
       {
         result.Terminal = node.Term.GetType().Name;
-        //xElem.SetAttribute("Text", node.Token.Text);
+
         if (node.Token.Value != null)
           result.Value = node.Token.Value.ToString();
       }
